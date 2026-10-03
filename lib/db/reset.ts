@@ -9,12 +9,12 @@ import {
 } from "./schema";
 
 export async function resetDemoEnvironment(): Promise<void> {
-  db.transaction((tx) => {
-    tx.delete(validationRuns).run();
-    tx.delete(policies).run();
-    tx.delete(transfers).run();
-    tx.delete(invariants).run();
-    tx.delete(traces).run();
-    tx.delete(incidents).run();
+  await db.transaction(async (tx) => {
+    await tx.delete(validationRuns);
+    await tx.delete(policies);
+    await tx.delete(transfers);
+    await tx.delete(invariants);
+    await tx.delete(traces);
+    await tx.delete(incidents);
   });
 }

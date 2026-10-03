@@ -27,19 +27,20 @@ export async function createInvariant(
 
   const invariantId = createInvariantId();
 
-  const created = db.transaction((tx) => {
-    const incident = tx
-      .select({ id: incidents.id })
+  const created = await db.transaction(async (tx) => {
+    const [incident] = await tx
+      .select({
+        id: incidents.id,
+      })
       .from(incidents)
       .where(eq(incidents.id, input.incidentId))
-      .limit(1)
-      .get();
+      .limit(1);
 
     if (!incident) {
       throw new Error(`Incident ${input.incidentId} was not found.`);
     }
 
-    return tx
+    const [createdInvariant] = await tx
       .insert(invariants)
       .values({
         id: invariantId,
@@ -52,8 +53,13 @@ export async function createInvariant(
         humanDescription: input.candidate.humanDescription,
         status: "active",
       })
-      .returning()
-      .get();
+      .returning();
+
+    if (!createdInvariant) {
+      throw new Error("Failed to create security invariant.");
+    }
+
+    return createdInvariant;
   });
 
   return created;

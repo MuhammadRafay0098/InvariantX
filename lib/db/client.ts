@@ -1,36 +1,34 @@
-import fs from "node:fs";
-import path from "node:path";
-
-import Database from "better-sqlite3";
-import { drizzle } from "drizzle-orm/better-sqlite3";
+import { createClient } from "@libsql/client";
+import { drizzle } from "drizzle-orm/libsql";
 
 import { env } from "../env";
 
 import * as schema from "./schema";
 
-function resolveDatabasePath(): string {
-  const configuredPath = env.DATABASE_URL;
+function normalizeDatabaseUrl(configuredUrl: string): string {
+  const value = configuredUrl.trim();
 
-  if (path.isAbsolute(configuredPath)) {
-    return configuredPath;
+  if (
+    value.startsWith("file:") ||
+    value.startsWith("libsql:") ||
+    value.startsWith("http://") ||
+    value.startsWith("https://") ||
+    value.startsWith("ws://") ||
+    value.startsWith("wss://")
+  ) {
+    return value;
   }
 
-  return path.resolve(process.cwd(), configuredPath);
+  return `file:${value}`;
 }
 
-const databasePath = resolveDatabasePath();
+const databaseUrl = normalizeDatabaseUrl(env.DATABASE_URL);
 
-fs.mkdirSync(path.dirname(databasePath), {
-  recursive: true,
+export const client = createClient({
+  url: databaseUrl,
+  authToken: env.DATABASE_AUTH_TOKEN,
 });
 
-const sqlite = new Database(databasePath);
-
-sqlite.pragma("journal_mode = WAL");
-sqlite.pragma("foreign_keys = ON");
-
-export const db = drizzle(sqlite, {
+export const db = drizzle(client, {
   schema,
 });
-
-export { sqlite };

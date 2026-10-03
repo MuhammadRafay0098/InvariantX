@@ -23,6 +23,7 @@ interface CreateIncidentInput {
 
   severity?: IncidentSeverity;
 }
+
 export async function createIncident(
   input: CreateIncidentInput,
 ): Promise<Incident> {
@@ -38,8 +39,8 @@ export async function createIncident(
 
   const incidentId = createIncidentId();
 
-  const incident = db.transaction((tx) => {
-    const created = tx
+  const incident = await db.transaction(async (tx) => {
+    const [created] = await tx
       .insert(incidents)
       .values({
         id: incidentId,
@@ -61,15 +62,18 @@ export async function createIncident(
 
         status: "detected",
       })
-      .returning()
-      .get();
+      .returning();
 
-    tx.update(traces)
+    if (!created) {
+      throw new Error("Failed to create security incident.");
+    }
+
+    await tx
+      .update(traces)
       .set({
         incidentId,
       })
-      .where(eq(traces.runId, input.runId))
-      .run();
+      .where(eq(traces.runId, input.runId));
 
     return created;
   });

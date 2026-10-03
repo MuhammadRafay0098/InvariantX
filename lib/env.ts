@@ -8,7 +8,9 @@ const serverEnvSchema = z.object({
   DATABASE_URL: z
     .string()
     .min(1, "DATABASE_URL is required")
-    .default("./data/invariantx.db"),
+    .default("file:./data/invariantx.db"),
+
+  DATABASE_AUTH_TOKEN: z.string().optional(),
 
   LLM_PROVIDER: z.enum(["groq"]).default("groq"),
 
@@ -32,6 +34,7 @@ const serverEnvSchema = z.object({
 const parsedEnv = serverEnvSchema.safeParse({
   NODE_ENV: process.env.NODE_ENV,
   DATABASE_URL: process.env.DATABASE_URL,
+  DATABASE_AUTH_TOKEN: process.env.DATABASE_AUTH_TOKEN,
   LLM_PROVIDER: process.env.LLM_PROVIDER,
   GROQ_API_KEY: process.env.GROQ_API_KEY,
   LLM_MODEL: process.env.LLM_MODEL,
