@@ -6,21 +6,46 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio",
+    "db:init": "tsx scripts/init-db.ts",
+    "demo:seed": "tsx scripts/seed-demo.ts",
+    "demo:reset": "tsx scripts/reset-demo.ts",
+    "demo:repository": "tsx scripts/run-repository-demo.ts",
+    "demo:email": "tsx scripts/run-email-demo.ts",
+    "setup": "npm run db:init && npm run demo:seed",
+    "demo:analysis": "tsx scripts/run-analysis-demo.ts",
+    "demo:transfer": "tsx scripts/run-transfer-demo.ts",
+    "demo:policy": "tsx scripts/run-policy-demo.ts",
+    "demo:validation": "tsx scripts/run-validation-demo.ts"
   },
   "dependencies": {
-    "next": "16.3.6",
-    "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "better-sqlite3": "^13.0.3",
+    "drizzle-orm": "^0.45.3",
+    "groq": "^6.16.0",
+    "groq-sdk": "^1.6.0",
+    "lucide-react": "^1.48.0",
+    "motion": "^13.4.5",
+    "next": "^16.3.6",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "server-only": "^0.0.1",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
+    "@types/better-sqlite3": "^9.6.0",
+    "@types/node": "^20.19.43",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "dotenv": "^18.0.4",
+    "drizzle-kit": "^0.31.11",
     "eslint": "^9",
     "eslint-config-next": "16.3.6",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3"
   }
 }
